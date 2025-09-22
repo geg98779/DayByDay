@@ -4,39 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Promise</title>
+    <title>demo</title>
 </head>
 
 <body>
 
 </body>
 <script>
-    Function.prototype.myCall = function (context) {
-        if (typeof this !== "function") {
-            console.error("type error")
-        }
-
-        let args = [...aruguments].slice(1)
-        let result = null
-        context = context || window
-        context.fn = this
-        result = context.fn(...args)
-        delete context.fn
-        return result
-    }
-
-
-    //MyPromise
-    class MyPromise {
-        //传入一个要执行的函数
-        constructor(executor) {
-            executor(resol)
-        }
-    }
-
-    function MyPromise(fn) {
-
-    }
 
 </script>
 
