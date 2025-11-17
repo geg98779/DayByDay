@@ -1,225 +1,23 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>纯JS抽屉嵌套表单示例</title>
-    <style>
-        /* -------------------- 抽屉和遮罩层样式 (Drawer & Overlay) -------------------- */
-
-        /* 遮罩层 */
-        .drawer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1000;
-            /* 默认隐藏 */
-            visibility: hidden;
-            opacity: 0;
-            transition: visibility 0s, opacity 0.3s;
-        }
-
-        .drawer-overlay.open {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* 抽屉主体 */
-        .drawer-content {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 350px;
-            max-width: 90%;
-            height: 100%;
-            background: white;
-            box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
-            /* 默认移出屏幕 */
-            transform: translateX(100%);
-            transition: transform 0.3s ease-out;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .drawer-content.open {
-            transform: translateX(0);
-            /* 移入屏幕 */
-        }
-
-        /* -------------------- 抽屉头部和表单样式 -------------------- */
-
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .drawer-header h2 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-
-        .drawer-body {
-            padding: 20px;
-            flex-grow: 1;
-            overflow-y: auto;
-            /* 允许内容滚动 */
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        /* 表单样式 */
-        .simple-form label {
-            display: block;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        .simple-form input[type="text"],
-        .simple-form input[type="email"] {
-            width: 95%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .simple-form button[type="submit"] {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .submitted-info {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #28a745;
-            background-color: #e2f9e9;
-            color: #155724;
-            border-radius: 4px;
-        }
-    </style>
+    <title>Document</title>
 </head>
 
 <body>
-
-    <div style="padding: 20px;">
-        <h1>用户管理面板</h1>
-
-        <button id="openDrawerBtn">
-            添加新用户 (打开抽屉)
-        </button>
-
-        <div id="submittedDataDisplay" class="submitted-info" style="display: none;">
-            最新提交:
-            <span id="submittedName"></span>,
-            <span id="submittedEmail"></span>
-        </div>
-    </div>
-
-    <div id="userDrawerOverlay" class="drawer-overlay">
-        <div id="userDrawerContent" class="drawer-content">
-            <div class="drawer-header">
-                <h2>创建新用户</h2>
-                <button class="close-btn" id="closeDrawerBtn">×</button>
-            </div>
-            <div class="drawer-body">
-                <form id="userForm" class="simple-form">
-                    <label>
-                        姓名:
-                        <input type="text" id="userName" required>
-                    </label>
-                    <label>
-                        邮箱:
-                        <input type="email" id="userEmail" required>
-                    </label>
-                    <button type="submit">提交并保存</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // -------------------- JavaScript 逻辑 --------------------
+        function generateRandomColor() {
+            const red = Math.floor(Math.random() * 256)
+            const green = Math.floor(Math.random() * 256)
+            const blue = Math.floor(Math.random() * 256)
 
-        // 1. 获取 DOM 元素
-        const overlay = document.getElementById('userDrawerOverlay');
-        const content = document.getElementById('userDrawerContent');
-        const openBtn = document.getElementById('openDrawerBtn');
-        const closeBtn = document.getElementById('closeDrawerBtn');
-        const userForm = document.getElementById('userForm');
-
-        const dataDisplay = document.getElementById('submittedDataDisplay');
-        const submittedName = document.getElementById('submittedName');
-        const submittedEmail = document.getElementById('submittedEmail');
-
-        // 2. 抽屉控制函数
-        const openDrawer = () => {
-            overlay.classList.add('open');
-            content.classList.add('open');
-        };
-
-        const closeDrawer = () => {
-            overlay.classList.remove('open');
-            content.classList.remove('open');
-        };
-
-        // 3. 事件监听器
-
-        // 打开抽屉
-        openBtn.addEventListener('click', openDrawer);
-
-        // 关闭抽屉 (点击 X 按钮)
-        closeBtn.addEventListener('click', closeDrawer);
-
-        // 关闭抽屉 (点击遮罩层)
-        overlay.addEventListener('click', closeDrawer);
-
-        // 阻止点击抽屉内容关闭抽屉 (事件冒泡阻止)
-        content.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-
-        // 4. 表单提交处理
-        userForm.addEventListener('submit', function (e) {
-            e.preventDefault(); // 阻止表单默认提交行为和页面刷新
-
-            const name = document.getElementById('userName').value;
-            const email = document.getElementById('userEmail').value;
-
-            // 处理数据
-            console.log('表单数据已提交:', { name, email });
-            alert(`用户 ${name} 的数据已保存！`);
-
-            // 更新页面展示
-            submittedName.textContent = name;
-            submittedEmail.textContent = email;
-            dataDisplay.style.display = 'block';
-
-            // 清空表单字段
-            userForm.reset();
-
-            // 关闭抽屉
-            closeDrawer();
-        });
-
+            const hex = `#${green.toString(16)}${red.toString(16)}${green.toString(16)}`
+            console.log(hex)
+        }
+        generateRandomColor()
     </script>
 </body>
 
