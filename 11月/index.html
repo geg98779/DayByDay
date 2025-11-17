@@ -1,24 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Flex 属性综合示例：Grow, Shrink, Basis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        /* --------------------------------- */
+        /* 通用容器样式 */
+        .container {
+            display: flex;
+            width: 500px;
+            /* 统一设置容器宽度 */
+            height: 80px;
+            border: 2px solid #333;
+            margin-bottom: 30px;
+            box-sizing: border-box;
+            background-color: #f0f0f0;
+        }
+
+        /* 通用项目样式 */
+        .item {
+            color: white;
+            text-align: center;
+            line-height: 80px;
+            font-size: 16px;
+            font-weight: bold;
+            /* 尽管设置了 width: 200px，但 flex-basis 会覆盖它 */
+            width: 200px;
+        }
+
+        /* --------------------------------- */
+        /* 1. FLEX-BASIS 示例 (基准宽度) */
+        /* 容器 500px */
+
+        .basis-item {
+            background-color: #1a73e8;
+            flex-grow: 0;
+            /* 禁用增长 */
+            flex-shrink: 0;
+            /* 禁用收缩 */
+        }
+
+        /* 示例 A: basis < width */
+        .basis-50 {
+            flex-basis: 50px;
+            /* 实际宽度为 50px */
+        }
+
+        /* 示例 B: basis > width */
+        .basis-300 {
+            flex-basis: 300px;
+            /* 实际宽度为 300px */
+        }
+
+        /* --------------------------------- */
+        /* 2. FLEX-GROW 示例 (分配剩余空间) */
+        /* 容器 500px. Items 基础宽度 100px. 剩余 300px */
+
+        .grow-container {
+            width: 500px;
+        }
+
+        .grow-item-a {
+            flex-basis: 100px;
+            background-color: #4CAF50;
+            flex-grow: 1;
+            /* 分配 1 份 */
+        }
+
+        .grow-item-b {
+            flex-basis: 100px;
+            background-color: #E91E63;
+            flex-grow: 2;
+            /* 分配 2 份 */
+        }
+
+        /* --------------------------------- */
+        /* 3. FLEX-SHRINK 示例 (收缩超出空间) */
+        /* 容器 300px. Items 基础宽度 200px. 超出 100px */
+
+        .shrink-container {
+            width: 300px;
+            /* 故意缩小容器宽度 */
+        }
+
+        .shrink-item-c {
+            flex-basis: 200px;
+            background-color: #f44336;
+            flex-shrink: 0;
+            /* 不收缩 */
+        }
+
+        .shrink-item-d {
+            flex-basis: 200px;
+            background-color: #9c27b0;
+            flex-shrink: 1;
+            /* 收缩 1 份 */
+        }
+    </style>
 </head>
 
 <body>
-    <script>
-        function generateRandomColor() {
-            const red = Math.floor(Math.random() * 256)
-            const green = Math.floor(Math.random() * 256)
-            const blue = Math.floor(Math.random() * 256)
 
-            const hex = `#${green.toString(16)}${red.toString(16)}${green.toString(16)}`
-            console.log(hex)
-        }
-        generateRandomColor()
-    </script>
+    <h1>1. Flex-Basis 示例 (定义基准宽度)</h1>
+    <p>容器宽度：500px。所有 Item 的 `width` 属性均设置为 200px。</p>
+
+    <h2>示例 A: flex-basis < width (Basis 优先)</h2>
+            <div class="container">
+                <div class="item basis-item basis-50">Item 1 (Basis: 50px)</div>
+                <div class="item basis-item">Item 2 (Basis: 200px)</div>
+                <div class="item basis-item">Item 3 (Basis: 200px)</div>
+            </div>
+
+            <h2>示例 B: basis > 容器剩余空间 (Basis + 禁用收缩)</h2>
+            <div class="container">
+                <div class="item basis-item basis-300">Item 1 (Basis: 300px)</div>
+                <div class="item basis-item basis-300">Item 2 (Basis: 300px)</div>
+            </div>
+
+            <hr>
+
+            <h1>2. Flex-Grow 示例 (Basis 作为起点增长)</h1>
+            <p>容器宽度：500px。项目基准宽度 (`flex-basis`)：100px。剩余空间：300px。</p>
+
+            <div class="container grow-container">
+                <div class="item grow-item-a">A (Basis:100, Grow:1)</div>
+                <div class="item grow-item-b">B (Basis:100, Grow:2)</div>
+            </div>
+
+            <hr>
+
+            <h1>3. Flex-Shrink 示例 (Basis 作为起点收缩)</h1>
+            <p>容器宽度：300px。项目基准宽度 (`flex-basis`)：200px。超出空间：100px。</p>
+
+            <div class="container shrink-container">
+                <div class="item shrink-item-c">C (Basis:200, Shrink:0)</div>
+                <div class="item shrink-item-d">D (Basis:200, Shrink:1)</div>
+            </div>
+
 </body>
 
 </html>
