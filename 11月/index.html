@@ -1,63 +1,25 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Box-Shadow 绘制 0.5px 线</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-
-        .line-wrapper {
-            width: 300px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            margin-bottom: 20px;
-        }
-
-        .shadow-line {
-            width: 100%;
-            height: 0;
-            /* 元素本身高度为 0 */
-
-            /* 关键步骤 1: 创建 1px 高的阴影线 */
-            /* 0 1px 0 0 表示：X偏移0, Y偏移1px, 模糊0, 扩散0 */
-            box-shadow: 0 1px 0 0 #333;
-
-            /* 关键步骤 2: 沿着Y轴缩放 0.5 倍 */
-            /* 缩放原点设为 0 0 (左上角)，确保缩放后位置不变 */
-            transform-origin: 0 0;
-            transform: scaleY(0.5);
-        }
-
-        /* 用于对比的正常 1px 线 */
-        .normal-line {
-            width: 100%;
-            height: 1px;
-            background-color: #333;
-            margin-top: 10px;
-        }
-    </style>
+    <title>Document</title>
 </head>
 
 <body>
-
-    <h1>使用 box-shadow + transform 绘制 0.5px 细线</h1>
-    <p>（在高分辨率屏幕上，下面的线看起来会更细）</p>
-
-    <div class="line-wrapper">
-        <p>0.5px 细线效果:</p>
-        <div class="shadow-line"></div>
-    </div>
-
-    <div class="line-wrapper">
-        <p>正常 1px 线对比:</p>
-        <div class="normal-line"></div>
-    </div>
-
+    <script>
+        const toCase = (str) => {
+            let strArr = str.split("")
+            for (let i = 0; i < strArr.length; i++) {
+                if (strArr[i] === '_') {
+                    strArr.splice(i, 1)
+                    strArr[i] = strArr[i].toUpperCase()
+                }
+            }
+            return strArr.join('')
+        }
+    </script>
 </body>
 
 </html>
