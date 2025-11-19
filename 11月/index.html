@@ -9,16 +9,33 @@
 
 <body>
     <script>
-        const toCase = (str) => {
-            let strArr = str.split("")
-            for (let i = 0; i < strArr.length; i++) {
-                if (strArr[i] === '_') {
-                    strArr.splice(i, 1)
-                    strArr[i] = strArr[i].toUpperCase()
-                }
-            }
-            return strArr.join('')
+        function formatDate(date) {
+            // Correctly get the full year
+            let year = date.getFullYear();
+
+            // Correctly get the month (0-indexed, so add 1) and pad it
+            let month = ('0' + (date.getMonth() + 1)).slice(-2);
+
+            // Correctly get the day of the month and pad it
+            let day = ('0' + date.getDate()).slice(-2);
+
+            // Correctly get the hours and pad it
+            let hours = ('0' + date.getHours()).slice(-2);
+
+            // Correctly get the minutes and pad it
+            let minutes = ('0' + date.getMinutes()).slice(-2);
+
+            // Correctly get the seconds and pad it
+            let seconds = ('0' + date.getSeconds()).slice(-2);
+
+            // Correctly format the return string (YYYY-MM-DD HH:MM:SS)
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
+
+        let date = new Date();
+        let formattedDate = formatDate(date);
+
+        console.log(formattedDate);
     </script>
 </body>
 
