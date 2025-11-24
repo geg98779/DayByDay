@@ -9,17 +9,7 @@
 
 <body>
     <script>
-        function new_(fn, ...args) {
-                if (Object.prototype.toString.call(fn) !== 1) {
-                
-                }
 
-                let obj = new Object()
-                obj.__proto__ = fn.prototype
-                let res = fn.call(obj, ...args)
-
-                return typeof res === 'object' ? res : obj
-            }
     </script>
 </body>
 
