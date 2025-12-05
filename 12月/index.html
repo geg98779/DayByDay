@@ -9,26 +9,7 @@
 
 <body>
     <script>
-        function throttle(fn, wait){
-            let timer = null
-            return function(...args){
-                if(!timer){
-                    timer = setTimeout(() => {
-                        fn.call(this,...args)
-                        timer = null
-                    },wait)
-                }
-            }
-        }
-        function debounce(fn,delay){
-            let timer = null
-            return function(...args){
-                clearTimeout(timer)
-                timer = setTimeout(() => {
-                    fn.call(this,...args)
-                },delay)
-            }
-        }
+
     </script>
 </body>
 
