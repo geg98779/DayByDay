@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const obj = {
+            fn: () => {
+                console.log(this); // 继承最近的非箭头函数（fn）的this → 指向obj
+            }
+        };
+        obj.fn(); // 输出：{fn: ƒ}
+        console.log(obj)
+    </script>
+</body>
+
+</html>
