@@ -8,44 +8,99 @@
 </head>
 
 <body>
-    <script type="">
-        type Listener = (...args: any[]) => void
+    <script>
+        // 从 Zustand 库中导入 create，用于创建状态管理 store
+        import { create } from 'zustand'
 
-        class EventEmitter {
-            private events: { [eventName: string]: Listener[] } = {}
+        // 导入另一个 store，用于获取当前选中的会话 ID
+        import { useConversationStore } from './useConversationStore'
 
-            on(eventName: string, listener: Listener): void {
-                if(!this.events[eventName]){
-                    this.events[eventName] = []
-                }
-                this.events[eventName].push(listener)
-            }
+        // 导入类型定义（消息内容类型、角色类型）
+        import type { MessageContent } from '@pc/types/chat'
+        import type { Role } from '@pc/types/common'
 
-            emit(eventName: string, ...args: any[]): void {
-                const listeners = this.events[eventName]
-                if(listeners){
-                    listeners.forEach(listener => {
-                        listener(...args)
-                    })
-                }
-            }
-
-            off(eventName: string, listener: Listener): void {
-                const listeners = this.events[eventName]
-                if(listeners){
-                    this.events[eventName] = listeners.filter(l => l !== listener)
-                }
-            }
-
-            once(eventName: string, listener: Listener): void {
-                cosnt onceWrapper: Listener = (...args: any[]) => {
-                    listener(...args)
-                    this.off(eventName, onceWrapper)
-                }
-
-                this.on(eventName, onceWrapper)
-            }
+        // 定义单条消息的结构
+        export type MessageProps = {
+            content: MessageContent[] // 消息内容（兼容旧格式）
+            role: Role                // 消息发送者的角色，例如 "user"、"system" 等
         }
+
+        // 定义整个聊天消息的结构：
+        // Map 的 key 是会话 ID (string)，value 是该会话的所有消息数组
+        export type ChatMessageProps = Map<string, MessageProps[]>
+
+        // 定义 Store 的数据结构与方法
+        export interface ChatStoreProps {
+            messages: ChatMessageProps                    // 所有会话的消息集合
+            addMessage: ({ content, role }: MessageProps) => void  // 添加新消息
+            addChunkMessage: (chunk: string) => void               // 分块追加消息内容（流式）
+        }
+
+        // 创建 Zustand Store
+        export const useChatStore = create < ChatStoreProps > ((set) => ({
+            // 初始状态：空的 Map
+            messages: new Map(),
+
+            // 🟩 添加一条完整消息（如用户或系统的完整一句话）
+            addMessage: ({ content, role }: MessageProps) => {
+                // 从会话 Store 中获取当前选中的会话 ID
+                const { selectedId } = useConversationStore.getState()
+
+                // 使用 set() 更新状态
+                set((state) => ({
+                    // 更新 messages
+                    messages: state.messages.set(selectedId as string, [
+                        // 取出当前选中会话的历史消息（没有则为空数组）
+                        ...(state.messages.get(selectedId as string) || []),
+                        // 追加新消息对象
+                        { content, role }
+                    ])
+                }))
+            },
+
+            // 🟦 添加消息片段（chunk）—— 用于像 ChatGPT 那种流式输出
+            addChunkMessage: (chunk: string) => {
+                // 获取当前选中的会话 ID
+                const { selectedId } = useConversationStore.getState()
+
+                // 更新状态
+                set((state) => {
+                    // 取出当前会话的消息数组（没有则为空）
+                    const currentMessages = state.messages.get(selectedId as string) || []
+                    // 获取最后一条消息
+                    const lastMessage = currentMessages[currentMessages.length - 1]
+
+                    // 如果最后一条是系统消息（system），则追加内容
+                    if (lastMessage && lastMessage.role === 'system') {
+                        // 获取该消息的内容数组
+                        const lastContent = lastMessage.content
+                        // 取出最后一段内容（可能是文本）
+                        const lastTextContent = lastContent[lastContent.length - 1]
+
+                        // 如果最后一段内容是文本类型，则直接在其后追加 chunk
+                        if (lastTextContent && lastTextContent.type === 'text') {
+                            lastTextContent.content += chunk
+                        }
+                    } else {
+                        // 否则，新建一条系统消息并放入 currentMessages
+                        currentMessages.push({
+                            content: [
+                                {
+                                    type: 'text',
+                                    content: chunk
+                                }
+                            ],
+                            role: 'system'
+                        })
+                    }
+
+                    // 更新状态中的 messages Map（按会话 ID 存）
+                    return {
+                        messages: state.messages.set(selectedId as string, currentMessages)
+                    }
+                })
+            }
+        }))
     </script>
 </body>
 
